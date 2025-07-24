@@ -32,12 +32,12 @@ const userSchema = new Schema({
     watchHistory: [
         {
             type: Schema.Types.ObjectId,
-            ref:'Video'
+            ref: 'Video'
         }
     ],
-    passsword: {
+    password: {
         type: String,
-        required: [true,'password is required']
+        required: [true, 'password is required']
     },
     refreshToken: {
         type: String,
@@ -47,38 +47,38 @@ const userSchema = new Schema({
     timestamps: true
 })
 
-userSchema.pre('save',async function (next){
-    if(!this.isModified('password')) return next();
-    this.password=await bcrypt.hash(this.password,10)
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
-userSchema.methods.isPasswordCorrect = async function(password){
-    return await bcrypt.compare(password,this.passsword)
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.passsword)
 }
 
-userSchema.mothods.generateAccessToken=function(){
+userSchema.methods.generateAccessToken = function () {
     return jwt.sign({
-        _id:this._id,
-        email:this.email,
-        username:this.username,
-        fullName:this.fullName
+        _id: this._id,
+        email: this.email,
+        username: this.username,
+        fullName: this.fullName
     },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-        expiresIn:process.env.ACCESS_TOKEN_EXPIRY
-    }
-)
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
 }
 
-userSchema.methods.generateRefreshToken= function(){
+userSchema.methods.generateRefreshToken = function () {
     return jwt.sign(
         {
-            _id:this._id
+            _id: this._id
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
 }
