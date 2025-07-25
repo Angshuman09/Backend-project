@@ -1,11 +1,11 @@
 import { Router } from "express";
 import express from 'express'
-import { registerUser, loginUser, logoutUser } from "../controllers/user.controller.js";
+import { registerUser, loginUser, logoutUser,refreshAccessToken } from "../controllers/user.controller.js";
 import { upload } from '../midlewares/multer.middleware.js'
 import { verifyJWT } from "../midlewares/auth.middleware.js";
 const router = Router()
 
-//here we are using multer middlware to upload avatar and coverImage in 
+// here we are using multer middlware to upload avatar and coverImage in 
 router.route("/register").post(
     upload.fields([
         {
@@ -34,8 +34,16 @@ router.route("/register").post(
 //     registerUsert stolen tokens
 // )
 
-router.route('/login').post(loginUser)
+router.route('/login').post(loginUser);
 
-router.route('/logout').post(verifyJWT, logoutUser);
+//secured route
+
+router.route('/logout').post(verifyJWT,logoutUser);
+
+router.route('/refresh-token').post(refreshAccessToken);
+
+// const router = express.Router()
+
+// router.post('/login',loginUser);
 
 export default router;
